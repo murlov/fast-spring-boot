@@ -24,6 +24,10 @@ class Coffee{
 	private final String id;
 	private String name;
 
+	public Coffee() {
+		this.id = UUID.randomUUID().toString(); // Или можно оставить null для id, если это допустимо
+	}
+
 	public Coffee(String id, String name) {
 		this.id = id;
 		this.name = name;
