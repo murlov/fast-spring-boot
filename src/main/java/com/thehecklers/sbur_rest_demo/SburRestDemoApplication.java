@@ -3,8 +3,12 @@ package com.thehecklers.sbur_rest_demo;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +22,7 @@ import java.util.UUID;
 
 interface CoffeeRepository extends CrudRepository<Coffee, String> {}
 
+@ConfigurationPropertiesScan
 @SpringBootApplication
 public class SburRestDemoApplication {
 
@@ -62,11 +67,12 @@ class Coffee{
 	}
 }
 
+
 @Component
 class DataLoader {
 	private final CoffeeRepository coffeeRepository;
 
-	public Dataloader(CoffeeRepository coffeeRepository) {
+	public DataLoader(CoffeeRepository coffeeRepository) {
 		this.coffeeRepository = coffeeRepository;
 	}
 
@@ -78,6 +84,28 @@ class DataLoader {
 				new Coffee("Coffee Lareno"),
 				new Coffee("Coffee Tres Pontas")
 				));
+	}
+}
+
+@ConfigurationProperties(prefix = "greeting")
+class Greeting {
+	private String name;
+	private String coffee;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getCoffee() {
+		return coffee;
+	}
+
+	public void setCoffee(String coffee) {
+		this.coffee = coffee;
 	}
 }
 
@@ -115,5 +143,25 @@ class RestApiDemoController {
 	@DeleteMapping("/{id}")
 	void deleteCoffee(@PathVariable String id) {
 		coffeeRepository.deleteById(id);
+	}
+}
+
+@RestController
+@RequestMapping("/greeting")
+class GreetingController {
+	private final Greeting greeting;
+
+	public GreetingController(Greeting greeting) {
+		this.greeting = greeting;
+	}
+
+	@GetMapping
+	String getGreeting() {
+		return greeting.getName();
+	}
+
+	@GetMapping("/coffee")
+	String getNameAndCoffee() {
+		return greeting.getCoffee();
 	}
 }
