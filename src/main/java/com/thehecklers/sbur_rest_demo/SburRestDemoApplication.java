@@ -30,6 +30,12 @@ public class SburRestDemoApplication {
 		SpringApplication.run(SburRestDemoApplication.class, args);
 	}
 
+	@Bean
+	@ConfigurationProperties(prefix = "droid")
+	Droid createDroid() {
+		return new Droid();
+	}
+
 }
 
 @Entity
@@ -109,6 +115,26 @@ class Greeting {
 	}
 }
 
+class Droid {
+	private String id, description;
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+}
+
 @RestController
 @RequestMapping("/coffees")
 class RestApiDemoController {
@@ -163,5 +189,20 @@ class GreetingController {
 	@GetMapping("/coffee")
 	String getNameAndCoffee() {
 		return greeting.getCoffee();
+	}
+}
+
+@RestController
+@RequestMapping("droid")
+class DroidController {
+	private final Droid droid;
+
+	public DroidController(Droid droid) {
+		this.droid = droid;
+	}
+
+	@GetMapping
+	Droid getDroid() {
+		return droid;
 	}
 }
